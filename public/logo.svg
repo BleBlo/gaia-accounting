@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 60">
+  <!-- GAIA text with elegant spacing -->
+  <text
+    x="90"
+    y="28"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="26"
+    font-weight="400"
+    fill="#ffffff"
+    text-anchor="middle"
+    letter-spacing="8"
+  >GAIA</text>
+
+  <!-- Decorative line -->
+  <line x1="30" y1="38" x2="150" y2="38" stroke="#ffffff" stroke-width="0.5" opacity="0.6"/>
+
+  <!-- Fashion House subtitle -->
+  <text
+    x="90"
+    y="52"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="10"
+    font-style="italic"
+    fill="#ffffff"
+    text-anchor="middle"
+    letter-spacing="2"
+    opacity="0.8"
+  >fashion house</text>
+</svg>
