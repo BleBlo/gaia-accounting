@@ -96,23 +96,25 @@ export default function ServicesPage() {
       is_variable_price: formData.is_variable_price,
     }
 
-    let success: boolean
-    if (editingService) {
-      success = await updateService(editingService.id, serviceData)
-      if (success) toast.success('Service updated successfully')
-    } else {
-      const result = await addService(serviceData)
-      success = !!result
-      if (success) toast.success('Service added successfully')
+    try {
+      if (editingService) {
+        const success = await updateService(editingService.id, serviceData)
+        if (success) {
+          toast.success('Service updated successfully')
+          setDialogOpen(false)
+        }
+      } else {
+        const result = await addService(serviceData)
+        if (result) {
+          toast.success('Service added successfully')
+          setDialogOpen(false)
+        }
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to save service')
     }
 
     setSaving(false)
-
-    if (success) {
-      setDialogOpen(false)
-    } else {
-      toast.error(serviceError || 'Failed to save service')
-    }
   }
 
   const handleDelete = async () => {

@@ -115,8 +115,7 @@ export function useExpenses(options: UseExpensesOptions = {}) {
     })
     const data = await res.json()
     if (!res.ok) {
-      console.error('Error adding expense:', data.error)
-      return null
+      throw new Error(data.error || 'Failed to add expense')
     }
     setExpenses((prev) => [data as ExpenseWithRelations, ...prev])
     return data as ExpenseWithRelations

@@ -40,9 +40,7 @@ export function useServices() {
     })
     const data = await res.json()
     if (!res.ok) {
-      console.error('Error adding service:', data.error)
-      setError(data.error)
-      return null
+      throw new Error(data.error || 'Failed to add service')
     }
     setServices((prev) => [...prev, data])
     return data

@@ -73,25 +73,27 @@ export function ExpenseForm() {
       notes: notes || null,
     }
 
-    const result = await addExpense(expenseData)
-    setSaving(false)
+    try {
+      const result = await addExpense(expenseData)
+      setSaving(false)
 
-    if (result) {
-      toast.success('Expense recorded successfully')
+      if (result) {
+        toast.success('Expense recorded successfully')
 
-      if (saveAndNew) {
-        // Reset form for new entry
-        setSelectedCategory(null)
-        setSupplierId(null)
-        setDescription('')
-        setAmount(0)
-        setReference('')
-        setNotes('')
-      } else {
-        router.push('/expenses')
+        if (saveAndNew) {
+          setSelectedCategory(null)
+          setSupplierId(null)
+          setDescription('')
+          setAmount(0)
+          setReference('')
+          setNotes('')
+        } else {
+          router.push('/expenses')
+        }
       }
-    } else {
-      toast.error('Failed to record expense')
+    } catch (err) {
+      setSaving(false)
+      toast.error(err instanceof Error ? err.message : 'Failed to record expense')
     }
   }
 
