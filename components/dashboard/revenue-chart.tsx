@@ -16,18 +16,7 @@ interface RevenueChartProps {
   data?: { date: string; amount: number }[]
 }
 
-// Placeholder data for demo
-const placeholderData = [
-  { date: 'Mon', amount: 1200 },
-  { date: 'Tue', amount: 890 },
-  { date: 'Wed', amount: 1540 },
-  { date: 'Thu', amount: 980 },
-  { date: 'Fri', amount: 2100 },
-  { date: 'Sat', amount: 1750 },
-  { date: 'Sun', amount: 650 },
-]
-
-export function RevenueChart({ data = placeholderData }: RevenueChartProps) {
+export function RevenueChart({ data = [] }: RevenueChartProps) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
