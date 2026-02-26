@@ -168,51 +168,48 @@ export function useSales(options: UseSalesOptions = {}) {
   }, [fetchSales])
 
   const addSale = async (sale: SaleInsert): Promise<Sale | null> => {
-    try {
-      const { data, error } = await supabase
-        .from('sales')
-        .insert(sale)
-        .select()
-        .single()
-
-      if (error) throw error
-      await fetchSales()
-      return data
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add sale')
+    const res = await fetch('/api/sales', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(sale),
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      setError(data.error || 'Failed to add sale')
       return null
     }
+    await fetchSales()
+    return data
   }
 
   const updateSale = async (id: string, updates: Partial<Sale>): Promise<Sale | null> => {
-    try {
-      const { data, error } = await supabase
-        .from('sales')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single()
-
-      if (error) throw error
-      await fetchSales()
-      return data
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update sale')
+    const res = await fetch('/api/sales', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, ...updates }),
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      setError(data.error || 'Failed to update sale')
       return null
     }
+    await fetchSales()
+    return data
   }
 
   const deleteSale = async (id: string): Promise<boolean> => {
-    try {
-      const { error } = await supabase.from('sales').delete().eq('id', id)
-
-      if (error) throw error
-      await fetchSales()
-      return true
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete sale')
+    const res = await fetch('/api/sales', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
+    if (!res.ok) {
+      const data = await res.json()
+      setError(data.error || 'Failed to delete sale')
       return false
     }
+    await fetchSales()
+    return true
   }
 
   return {

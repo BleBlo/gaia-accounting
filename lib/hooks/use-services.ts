@@ -33,49 +33,47 @@ export function useServices() {
   }, [fetchServices])
 
   const addService = async (service: ServiceInsert): Promise<Service | null> => {
-    const { data, error } = await supabase
-      .from('services')
-      .insert({ ...service, is_active: true })
-      .select()
-      .single()
-
-    if (error) {
-      console.error('Error adding service:', error)
-      setError(error.message)
+    const res = await fetch('/api/services', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(service),
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      console.error('Error adding service:', data.error)
+      setError(data.error)
       return null
     }
-
     setServices((prev) => [...prev, data])
     return data
   }
 
   const updateService = async (id: string, updates: Partial<ServiceInsert>): Promise<boolean> => {
-    const { error } = await supabase
-      .from('services')
-      .update(updates)
-      .eq('id', id)
-
-    if (error) {
-      console.error('Error updating service:', error)
+    const res = await fetch('/api/services', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, ...updates }),
+    })
+    if (!res.ok) {
+      const data = await res.json()
+      console.error('Error updating service:', data.error)
       return false
     }
-
     await fetchServices()
     return true
   }
 
   const deleteService = async (id: string): Promise<boolean> => {
-    // Soft delete by setting is_active to false
-    const { error } = await supabase
-      .from('services')
-      .update({ is_active: false })
-      .eq('id', id)
-
-    if (error) {
-      console.error('Error deleting service:', error)
+    const res = await fetch('/api/services', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
+    if (!res.ok) {
+      const data = await res.json()
+      console.error('Error deleting service:', data.error)
       return false
     }
-
     setServices((prev) => prev.filter((s) => s.id !== id))
     return true
   }

@@ -52,8 +52,11 @@ export default function SaleDetailPage() {
 
   const handleDelete = async () => {
     setDeleting(true)
-    const supabase = createClient()
-    await supabase.from('sales').delete().eq('id', id)
+    await fetch('/api/sales', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
     router.push('/sales')
   }
 

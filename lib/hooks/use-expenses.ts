@@ -98,51 +98,46 @@ export function useExpenses(options: UseExpensesOptions = {}) {
   }, [fetchExpenses])
 
   const addExpense = async (expense: ExpenseInsert): Promise<ExpenseWithRelations | null> => {
-    const { data, error } = await supabase
-      .from('expenses')
-      .insert(expense)
-      .select(`
-        *,
-        category:expense_categories(id, name_en, name_tr),
-        supplier:suppliers(id, name)
-      `)
-      .single()
-
-    if (error) {
-      console.error('Error adding expense:', error)
+    const res = await fetch('/api/expenses', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(expense),
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      console.error('Error adding expense:', data.error)
       return null
     }
-
     setExpenses((prev) => [data as ExpenseWithRelations, ...prev])
     return data as ExpenseWithRelations
   }
 
   const updateExpense = async (id: string, updates: Partial<ExpenseInsert>): Promise<boolean> => {
-    const { error } = await supabase
-      .from('expenses')
-      .update(updates)
-      .eq('id', id)
-
-    if (error) {
-      console.error('Error updating expense:', error)
+    const res = await fetch('/api/expenses', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, ...updates }),
+    })
+    if (!res.ok) {
+      const data = await res.json()
+      console.error('Error updating expense:', data.error)
       return false
     }
-
     await fetchExpenses()
     return true
   }
 
   const deleteExpense = async (id: string): Promise<boolean> => {
-    const { error } = await supabase
-      .from('expenses')
-      .delete()
-      .eq('id', id)
-
-    if (error) {
-      console.error('Error deleting expense:', error)
+    const res = await fetch('/api/expenses', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
+    if (!res.ok) {
+      const data = await res.json()
+      console.error('Error deleting expense:', data.error)
       return false
     }
-
     setExpenses((prev) => prev.filter((e) => e.id !== id))
     return true
   }
