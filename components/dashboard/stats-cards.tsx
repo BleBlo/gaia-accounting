@@ -99,7 +99,6 @@ export function StatsCards({
         title="This Week"
         value={formatCurrency(weekSales)}
         icon={CalendarDays}
-        trend={{ value: 12, isPositive: true }}
       />
       <StatsCard
         title="This Month"

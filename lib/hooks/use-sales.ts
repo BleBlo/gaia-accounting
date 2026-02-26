@@ -54,10 +54,17 @@ export function useSales(options: UseSalesOptions = {}) {
         `)
         .order('sale_date', { ascending: false })
 
-      // Apply date range filter
+      // Apply date range filter (use local date to match how sale_date is stored)
+      const localDate = (d: Date) => {
+        const y = d.getFullYear()
+        const m = String(d.getMonth() + 1).padStart(2, '0')
+        const day = String(d.getDate()).padStart(2, '0')
+        return `${y}-${m}-${day}`
+      }
+
       if (options.dateRange) {
         const today = new Date()
-        const todayStr = today.toISOString().split('T')[0]
+        const todayStr = localDate(today)
         let startDate: string
 
         switch (options.dateRange) {
@@ -66,13 +73,14 @@ export function useSales(options: UseSalesOptions = {}) {
             query = query.eq('sale_date', todayStr)
             break
           case 'week':
-            const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
-            startDate = weekAgo.toISOString().split('T')[0]
+            const weekAgo = new Date(today)
+            weekAgo.setDate(weekAgo.getDate() - 6)
+            startDate = localDate(weekAgo)
             query = query.gte('sale_date', startDate)
             break
           case 'month':
             const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate())
-            startDate = monthAgo.toISOString().split('T')[0]
+            startDate = localDate(monthAgo)
             query = query.gte('sale_date', startDate)
             break
         }

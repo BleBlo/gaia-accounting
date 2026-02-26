@@ -9,8 +9,18 @@ import { RevenueChart } from '@/components/dashboard/revenue-chart'
 export default function DashboardPage() {
   const { sales } = useSales({ dateRange: 'month' })
 
-  const today = new Date().toISOString().split('T')[0]
-  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+  // Use local date (matching how sale_date is stored via date-fns format)
+  const localDate = (d: Date) => {
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
+  }
+
+  const today = localDate(new Date())
+  const weekAgoDate = new Date()
+  weekAgoDate.setDate(weekAgoDate.getDate() - 6)
+  const weekAgo = localDate(weekAgoDate)
 
   const todaySales = sales.filter((s) => s.sale_date === today)
   const weekSales = sales.filter((s) => s.sale_date >= weekAgo)
@@ -27,7 +37,7 @@ export default function DashboardPage() {
   const chartData = Array.from({ length: 7 }, (_, i) => {
     const d = new Date()
     d.setDate(d.getDate() - (6 - i))
-    const dateStr = d.toISOString().split('T')[0]
+    const dateStr = localDate(d)
     const dayLabel = d.toLocaleDateString('en-AE', { weekday: 'short' })
     const amount = sales
       .filter((s) => s.sale_date === dateStr)

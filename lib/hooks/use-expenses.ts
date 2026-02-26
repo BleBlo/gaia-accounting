@@ -34,24 +34,34 @@ export function useExpenses(options: UseExpensesOptions = {}) {
       `)
       .order('expense_date', { ascending: false })
 
-    // Apply date filter
+    // Apply date filter (use local date to match how expense_date is stored)
+    const localDate = (d: Date) => {
+      const y = d.getFullYear()
+      const m = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      return `${y}-${m}-${day}`
+    }
+
     if (options.dateRange) {
-      const today = new Date()
+      const now = new Date()
       let startDate: Date
 
       switch (options.dateRange) {
         case 'today':
-          startDate = today
+          startDate = now
           break
         case 'week':
-          startDate = new Date(today.setDate(today.getDate() - 7))
+          startDate = new Date(now)
+          startDate.setDate(startDate.getDate() - 6)
           break
         case 'month':
-          startDate = new Date(today.setMonth(today.getMonth() - 1))
+          startDate = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())
           break
+        default:
+          startDate = now
       }
 
-      query = query.gte('expense_date', startDate.toISOString().split('T')[0])
+      query = query.gte('expense_date', localDate(startDate))
     }
 
     // Apply category filter
