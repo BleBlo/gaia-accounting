@@ -31,7 +31,7 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
 export default function ServicesPage() {
-  const { services, loading, addService, updateService, deleteService } = useServices()
+  const { services, loading, error: serviceError, addService, updateService, deleteService } = useServices()
   const [searchQuery, setSearchQuery] = useState('')
   const [dialogOpen, setDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -111,7 +111,7 @@ export default function ServicesPage() {
     if (success) {
       setDialogOpen(false)
     } else {
-      toast.error('Failed to save service')
+      toast.error(serviceError || 'Failed to save service')
     }
   }
 

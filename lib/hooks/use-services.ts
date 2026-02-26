@@ -41,6 +41,7 @@ export function useServices() {
 
     if (error) {
       console.error('Error adding service:', error)
+      setError(error.message)
       return null
     }
 
