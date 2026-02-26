@@ -68,6 +68,8 @@ export function ExpenseForm() {
       supplier_id: supplierId,
       description: description || null,
       amount,
+      vat_amount: 0,
+      total_amount: amount,
       payment_method: paymentMethod,
       reference_number: reference || null,
       notes: notes || null,
